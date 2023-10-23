@@ -1,16 +1,14 @@
-## web3auth/modal + Safe protocol-kit + Safe relay-kit
+## web3auth/modal + Safe protocol-kit + Safe relay-kit + Safe api kit
 
 * Create .env file.
-* Use a safe address that belongs to the signer you re going to test.
+* Add web3auth client id.
 
 ```env
 VITE_WEB3AUTH_CLIENT_ID=
-VITE_ETH_SEND_TO=
-VITE_ETH_SIGNER_SAFE_ADDRESS=
 ```
 
 ```bash
-pnpm i
+pnpm install
 pnpm run dev
 ```
 
