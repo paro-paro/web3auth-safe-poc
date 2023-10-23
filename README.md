@@ -10,6 +10,7 @@ VITE_ETH_SIGNER_SAFE_ADDRESS=
 ```
 
 ```bash
+pnpm i
 pnpm run dev
 ```
 
