@@ -3,16 +3,14 @@ import { getCurrentInstance } from 'vue'
 import { ethers } from 'ethers'
 import { GelatoRelayPack } from '@safe-global/relay-kit'
 import Safe, { EthersAdapter } from '@safe-global/protocol-kit'
-import { Web3Auth } from '@web3auth/modal'
+import SafeApiKit from '@safe-global/api-kit'
+import type { Web3Auth } from '@web3auth/modal'
 import type { IProvider } from '@web3auth/base'
 
 const instance = getCurrentInstance()
 const auth = instance?.appContext.config.globalProperties.$auth as Web3Auth
 let provider: ethers.providers.Web3Provider | null = null
 
-// hardcoded for demo purposes
-const TO: string = import.meta.env.VITE_ETH_SEND_TO as string
-const SAFE_ADDRESS: string = import.meta.env.VITE_ETH_SIGNER_SAFE_ADDRESS as string
 const AMOUNT = '0.0000001'
 
 async function onCheck() {
@@ -47,19 +45,31 @@ async function onRelay() {
     console.log('Sending RELAY TX')
     const relayPack = new GelatoRelayPack()
     const signer = provider?.getSigner()
+    console.log('signer', signer)
 
     if (!signer)
       throw new Error('No signer')
 
+    const eoa = await signer.getAddress()
     const ethAdapter = new EthersAdapter({ ethers, signerOrProvider: signer })
+    const safeApiKit = new SafeApiKit({ txServiceUrl: 'https://safe-transaction-goerli.safe.global', ethAdapter })
+    const { safes } = await safeApiKit.getSafesByOwner(eoa)
+
+    if (!safes.length)
+      throw new Error(`No safes owned by Signer: ${eoa} (goerli)`)
+    else 
+      console.log(`EOA: ${eoa}`, `Safe: ${safes[0]}`)
+
     const safeSdk = await Safe.create({
       ethAdapter,
-      safeAddress: SAFE_ADDRESS,
+      safeAddress: safes[0],
     })
 
+    // send gelato-relay (syncfee) tx (from safe to eoa)
+    console.log(`Sending ${AMOUNT} ETH from Safe to EOA`)
     const transactions = [
       {
-        to: TO,
+        to: eoa,
         data: '0x',
         value: ethers.utils.parseUnits(AMOUNT, 'ether').toString(),
       },
