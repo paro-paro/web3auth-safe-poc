@@ -4,7 +4,7 @@ import BaseComponent from './components/BaseComponent.vue'
 
 <template>
   <div>
-    <h1>Web3auth (modal) + Safe (protocol/relay kits)</h1>
+    <h1>Web3auth + Safe</h1>
     <BaseComponent />
   </div>
 </template>
