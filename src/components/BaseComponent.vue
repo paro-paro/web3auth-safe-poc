@@ -76,7 +76,7 @@ async function onRelay() {
     ]
 
     const safeTransaction = await relayPack.createRelayedTransaction({ safe: safeSdk, transactions })
-    const safeTransactionSigned = await safeSdk.signTransaction(safeTransaction)
+    const safeTransactionSigned = await safeSdk.signTransaction(safeTransaction, 'eth_sign')
 
     const res = await relayPack.executeRelayTransaction(safeTransactionSigned, safeSdk)
     console.log('url: ', `https://relay.gelato.digital/tasks/status/${res.taskId}`)
